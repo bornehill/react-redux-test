@@ -1,8 +1,12 @@
 import * as types from './actions-types';
 import courseAPI from '../api/MockCourseAPI';
 
-export function createCourse(course){
-    return { type: types.CREATE_COURSE, course};
+export function createCourseSuccess(course){
+    return { type: types.CREATE_COURSE_SUCCESS, course};
+}
+
+export function updateCourseSuccess(course){
+    return { type: types.UPDATE_COURSE_SUCCESS, course};
 }
 
 export function loadCoursesSuccess(courses){
@@ -13,6 +17,17 @@ export function loadCourses() {
     return function(dispatch) {
         return courseAPI.getAllCourses().then(courses => {
             dispatch(loadCoursesSuccess(courses));
+        }).catch(error => {
+            throw(error);
+        });
+    };
+}
+
+export function saveCourse(course) {
+    return function(dispatch, getState) {
+        return courseAPI.saveCourse(course).then(savedCourse => {
+            course.id ? dispatch(updateCourseSuccess(savedCourse)) : 
+            dispatch(createCourseSuccess(savedCourse));
         }).catch(error => {
             throw(error);
         });
